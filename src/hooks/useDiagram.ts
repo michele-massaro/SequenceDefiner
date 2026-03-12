@@ -11,13 +11,13 @@ function generateId(): string {
   return `id-${nextId++}-${Date.now()}`;
 }
 
-const initialState: DiagramState = {
+const emptyState: DiagramState = {
   actors: [],
   elements: [],
 };
 
-export function useDiagram() {
-  const [state, setState] = useState<DiagramState>(initialState);
+export function useDiagram(initialState?: DiagramState) {
+  const [state, setState] = useState<DiagramState>(initialState ?? emptyState);
 
   const addActor = useCallback(
     (name: string, type: ActorType = "participant", alias?: string) => {
@@ -108,7 +108,7 @@ export function useDiagram() {
   }, []);
 
   const resetDiagram = useCallback(() => {
-    setState(initialState);
+    setState(emptyState);
   }, []);
 
   const loadState = useCallback((newState: DiagramState) => {

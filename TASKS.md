@@ -68,10 +68,10 @@ Tasks are ordered by dependency. Each phase builds on the previous one.
 
 ## Phase 8: Persistence
 
-- [ ] Implement `useLocalStorage` hook — auto-saves `DiagramState` to LocalStorage on every change
-- [ ] Restore diagram state from LocalStorage on app load
-- [ ] Clear LocalStorage when "New Session" is triggered
-- [ ] Persist theme preference to LocalStorage
+- [x] Implement `useLocalStorage` hook — auto-saves `DiagramState` to LocalStorage on every change
+- [x] Restore diagram state from LocalStorage on app load
+- [x] Clear LocalStorage when "New Session" is triggered
+- [x] Persist theme preference to LocalStorage
 
 ## Phase 9: Theming
 
