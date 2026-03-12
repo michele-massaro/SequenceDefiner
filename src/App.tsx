@@ -19,7 +19,10 @@ function App() {
         <Sidebar />
         <div className="flex flex-1 flex-col overflow-hidden">
           <DiagramPreview svg={svg} error={error} />
-          <BottomBar />
+          <BottomBar
+            actors={diagram.state.actors}
+            onAddElement={diagram.addElement}
+          />
         </div>
       </div>
     </div>

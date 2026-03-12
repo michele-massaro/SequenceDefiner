@@ -34,11 +34,11 @@ Tasks are ordered by dependency. Each phase builds on the previous one.
 
 ## Phase 4: Bottom Bar — Adding Elements
 
-- [ ] Implement `BottomBar` component shell with tabs/sections for Message, Activation, and Note
-- [ ] Implement "Add Message" form — From (dropdown), To (dropdown), Label (text input), Arrow Type (selector with all 8 types), Add button
-- [ ] Implement "Add Activation/Deactivation" form — Actor (dropdown), Type (activate/deactivate toggle), Add button
-- [ ] Implement "Add Note" form — Position (left of/right of/over), Actor(s) selector, Text input, Add button
-- [ ] Verify that adding each element type updates the preview in real time
+- [x] Implement `BottomBar` component shell with tabs/sections for Message, Activation, and Note
+- [x] Implement "Add Message" form — From (dropdown), To (dropdown), Label (text input), Arrow Type (selector with all 8 types), Add button
+- [x] Implement "Add Activation/Deactivation" form — Actor (dropdown), Type (activate/deactivate toggle), Add button
+- [x] Implement "Add Note" form — Position (left of/right of/over), Actor(s) selector, Text input, Add button
+- [x] Verify that adding each element type updates the preview in real time
 
 ## Phase 5: Sidebar — Actor Management
 
