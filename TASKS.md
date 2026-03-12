@@ -6,12 +6,12 @@ Tasks are ordered by dependency. Each phase builds on the previous one.
 
 ## Phase 1: Project Setup
 
-- [ ] Initialize Vite project with React 19 + TypeScript template
-- [ ] Install and configure Tailwind CSS
-- [ ] Install and configure shadcn/ui (init + required components: Button, Input, Select, Dialog, DropdownMenu, Separator, ScrollArea, Tooltip)
-- [ ] Install mermaid.js
-- [ ] Define the core TypeScript types in `src/lib/types.ts` (`Actor`, `ActorType`, `ArrowType`, `Message`, `Activation`, `Note`, `DiagramElement`, `DiagramState`)
-- [ ] Set up the basic app layout shell in `App.tsx` (top bar, sidebar, main area with preview + bottom bar) using placeholder components
+- [x] Initialize Vite project with React 19 + TypeScript template
+- [x] Install and configure Tailwind CSS
+- [x] Install and configure shadcn/ui (init + required components: Button, Input, Select, Dialog, DropdownMenu, Separator, ScrollArea, Tooltip)
+- [x] Install mermaid.js
+- [x] Define the core TypeScript types in `src/lib/types.ts` (`Actor`, `ActorType`, `ArrowType`, `Message`, `Activation`, `Note`, `DiagramElement`, `DiagramState`)
+- [x] Set up the basic app layout shell in `App.tsx` (top bar, sidebar, main area with preview + bottom bar) using placeholder components
 
 ## Phase 2: Core Data Layer
 
