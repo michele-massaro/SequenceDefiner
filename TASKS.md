@@ -28,9 +28,9 @@ Tasks are ordered by dependency. Each phase builds on the previous one.
 
 ## Phase 3: Diagram Preview
 
-- [ ] Implement `useMermaid` hook — takes a Mermaid string, renders it into an SVG using mermaid.js, handles errors gracefully
-- [ ] Implement `DiagramPreview` component — displays the rendered SVG, re-renders on every state change
-- [ ] Wire `useDiagram` → `mermaid-serializer` → `useMermaid` → `DiagramPreview` so the preview updates in real time
+- [x] Implement `useMermaid` hook — takes a Mermaid string, renders it into an SVG using mermaid.js, handles errors gracefully
+- [x] Implement `DiagramPreview` component — displays the rendered SVG, re-renders on every state change
+- [x] Wire `useDiagram` → `mermaid-serializer` → `useMermaid` → `DiagramPreview` so the preview updates in real time
 
 ## Phase 4: Bottom Bar — Adding Elements
 
