@@ -42,12 +42,12 @@ Tasks are ordered by dependency. Each phase builds on the previous one.
 
 ## Phase 5: Sidebar — Actor Management
 
-- [ ] Implement `ActorList` component — displays all actors with name, alias, and type icon
-- [ ] Implement "Add Actor" UI — inline form or dialog with name, optional alias, and type (participant/actor) fields
-- [ ] Implement "Remove Actor" — delete button with confirmation dialog warning about associated messages being removed
-- [ ] Implement "Rename Actor" — inline edit or dialog for name and alias
-- [ ] Implement "Reorder Actors" — drag-and-drop or up/down arrow buttons
-- [ ] Implement `Sidebar` component combining actor list and element list
+- [x] Implement `ActorList` component — displays all actors with name, alias, and type icon
+- [x] Implement "Add Actor" UI — inline form or dialog with name, optional alias, and type (participant/actor) fields
+- [x] Implement "Remove Actor" — delete button with confirmation dialog warning about associated messages being removed
+- [x] Implement "Rename Actor" — inline edit or dialog for name and alias
+- [x] Implement "Reorder Actors" — drag-and-drop or up/down arrow buttons
+- [x] Implement `Sidebar` component combining actor list and element list
 
 ## Phase 6: Sidebar — Element List
 

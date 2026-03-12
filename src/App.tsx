@@ -16,7 +16,14 @@ function App() {
     <div className="flex h-screen flex-col">
       <TopBar />
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar />
+        <Sidebar
+            actors={diagram.state.actors}
+            onAddActor={diagram.addActor}
+            onRemoveActor={diagram.removeActor}
+            onRenameActor={diagram.renameActor}
+            onReorderActor={diagram.reorderActor}
+            onUpdateActorType={diagram.updateActorType}
+          />
         <div className="flex flex-1 flex-col overflow-hidden">
           <DiagramPreview svg={svg} error={error} />
           <BottomBar
