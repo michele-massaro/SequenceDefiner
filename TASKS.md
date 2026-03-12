@@ -15,16 +15,16 @@ Tasks are ordered by dependency. Each phase builds on the previous one.
 
 ## Phase 2: Core Data Layer
 
-- [ ] Implement `useDiagram` hook — manages `DiagramState` (actors + elements) with all mutation functions:
+- [x] Implement `useDiagram` hook — manages `DiagramState` (actors + elements) with all mutation functions:
   - `addActor`, `removeActor`, `renameActor`, `reorderActor`, `updateActorType`
   - `addElement`, `removeElement`, `reorderElement`
   - `resetDiagram` (new session)
   - `loadState` (for import)
-- [ ] Implement `mermaid-serializer.ts` — converts `DiagramState` into a valid Mermaid sequence diagram string
-- [ ] Implement `mermaid-parser.ts` — parses a Mermaid sequence diagram string into `DiagramState`
-- [ ] Write unit tests for the serializer (round-trip: state → mermaid string → verify output)
-- [ ] Write unit tests for the parser (known `.mmd` input → expected `DiagramState`)
-- [ ] Write round-trip tests (state → serialize → parse → compare with original state)
+- [x] Implement `mermaid-serializer.ts` — converts `DiagramState` into a valid Mermaid sequence diagram string
+- [x] Implement `mermaid-parser.ts` — parses a Mermaid sequence diagram string into `DiagramState`
+- [x] Write unit tests for the serializer (round-trip: state → mermaid string → verify output)
+- [x] Write unit tests for the parser (known `.mmd` input → expected `DiagramState`)
+- [x] Write round-trip tests (state → serialize → parse → compare with original state)
 
 ## Phase 3: Diagram Preview
 
