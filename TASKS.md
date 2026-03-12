@@ -51,12 +51,12 @@ Tasks are ordered by dependency. Each phase builds on the previous one.
 
 ## Phase 6: Sidebar — Element List
 
-- [ ] Implement `ElementList` component — displays all elements with human-readable summaries
+- [x] Implement `ElementList` component — displays all elements with human-readable summaries
   - Messages: "Alice →→ Bob: Hello" (with arrow type visual hint)
   - Activations: "activate Bob" / "deactivate Bob"
   - Notes: "Note over Alice: text"
-- [ ] Implement "Delete Element" — delete button on each element
-- [ ] Implement "Reorder Elements" — drag-and-drop or up/down arrow buttons
+- [x] Implement "Delete Element" — delete button on each element
+- [x] Implement "Reorder Elements" — drag-and-drop or up/down arrow buttons
 
 ## Phase 7: Top Bar
 
