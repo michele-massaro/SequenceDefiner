@@ -5,6 +5,7 @@ import { DiagramPreview } from "@/components/DiagramPreview";
 import { BottomBar } from "@/components/BottomBar";
 import { useDiagram } from "@/hooks/useDiagram";
 import { useMermaid } from "@/hooks/useMermaid";
+import { useTheme } from "@/components/ThemeProvider";
 import { serialize } from "@/lib/mermaid-serializer";
 import {
   loadDiagramFromStorage,
@@ -15,9 +16,10 @@ import {
 const restoredState = loadDiagramFromStorage();
 
 function App() {
+  const { theme } = useTheme();
   const diagram = useDiagram(restoredState ?? undefined);
   const mermaidCode = useMemo(() => serialize(diagram.state), [diagram.state]);
-  const { svg, error } = useMermaid(mermaidCode);
+  const { svg, error } = useMermaid(mermaidCode, theme);
 
   useAutoSaveDiagram(diagram.state);
 

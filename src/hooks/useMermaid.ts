@@ -1,20 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import mermaid from "mermaid";
 
-mermaid.initialize({
-  startOnLoad: false,
-  securityLevel: "loose",
-  theme: "default",
-});
-
 let renderCounter = 0;
+let currentMermaidTheme: "default" | "dark" | null = null;
 
-export function useMermaid(code: string) {
+export function useMermaid(code: string, theme: "light" | "dark" = "light") {
   const [svg, setSvg] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const currentRender = useRef(0);
 
-  const render = useCallback(async (source: string) => {
+  const mermaidTheme = theme === "dark" ? ("dark" as const) : ("default" as const);
+
+  const render = useCallback(async (source: string, mTheme: "default" | "dark") => {
     const renderId = ++renderCounter;
     currentRender.current = renderId;
 
@@ -22,6 +19,15 @@ export function useMermaid(code: string) {
       setSvg("");
       setError(null);
       return;
+    }
+
+    if (currentMermaidTheme !== mTheme) {
+      mermaid.initialize({
+        startOnLoad: false,
+        securityLevel: "loose",
+        theme: mTheme,
+      });
+      currentMermaidTheme = mTheme;
     }
 
     try {
@@ -43,8 +49,8 @@ export function useMermaid(code: string) {
   }, []);
 
   useEffect(() => {
-    render(code);
-  }, [code, render]);
+    render(code, mermaidTheme);
+  }, [code, mermaidTheme, render]);
 
   return { svg, error };
 }

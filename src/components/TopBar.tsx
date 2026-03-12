@@ -18,6 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { MenuIcon, FilePlusIcon, UploadIcon, DownloadIcon } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface TopBarProps {
   mermaidCode: string;
@@ -87,6 +88,7 @@ export function TopBar({ mermaidCode, onNewSession, onImport }: TopBarProps) {
     <div className="flex h-14 items-center justify-between border-b px-4">
       <h1 className="text-lg font-semibold">SequenceDefiner</h1>
       <div className="flex items-center gap-2">
+        <ThemeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger
             render={<Button variant="outline" size="icon" />}

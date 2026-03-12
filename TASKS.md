@@ -75,10 +75,10 @@ Tasks are ordered by dependency. Each phase builds on the previous one.
 
 ## Phase 9: Theming
 
-- [ ] Set up shadcn/ui theme provider with light and dark mode support
-- [ ] Implement `ThemeToggle` component in the top bar
-- [ ] Ensure all components render correctly in both themes
-- [ ] Ensure the Mermaid diagram preview respects the current theme (light/dark mermaid theme)
+- [x] Set up shadcn/ui theme provider with light and dark mode support
+- [x] Implement `ThemeToggle` component in the top bar
+- [x] Ensure all components render correctly in both themes
+- [x] Ensure the Mermaid diagram preview respects the current theme (light/dark mermaid theme)
 
 ## Phase 10: Polish & Edge Cases
 
