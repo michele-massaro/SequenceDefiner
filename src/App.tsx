@@ -14,7 +14,11 @@ function App() {
 
   return (
     <div className="flex h-screen flex-col">
-      <TopBar />
+      <TopBar
+        mermaidCode={mermaidCode}
+        onNewSession={diagram.resetDiagram}
+        onImport={diagram.loadState}
+      />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar
             actors={diagram.state.actors}

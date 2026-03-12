@@ -60,11 +60,11 @@ Tasks are ordered by dependency. Each phase builds on the previous one.
 
 ## Phase 7: Top Bar
 
-- [ ] Implement `TopBar` component with app name and menu
-- [ ] Implement "New Session" — clears diagram state after confirmation dialog
-- [ ] Implement "Export File" — serializes current state to `.mmd` and triggers browser file download
-- [ ] Implement "Import File" — opens file picker, reads `.mmd` file, parses it with `mermaid-parser`, loads the resulting state into `useDiagram`
-- [ ] Handle import errors gracefully (show toast/alert for malformed files)
+- [x] Implement `TopBar` component with app name and menu
+- [x] Implement "New Session" — clears diagram state after confirmation dialog
+- [x] Implement "Export File" — serializes current state to `.mmd` and triggers browser file download
+- [x] Implement "Import File" — opens file picker, reads `.mmd` file, parses it with `mermaid-parser`, loads the resulting state into `useDiagram`
+- [x] Handle import errors gracefully (show toast/alert for malformed files)
 
 ## Phase 8: Persistence
 
