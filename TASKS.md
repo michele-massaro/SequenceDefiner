@@ -82,14 +82,14 @@ Tasks are ordered by dependency. Each phase builds on the previous one.
 
 ## Phase 10: Polish & Edge Cases
 
-- [ ] Handle empty state — show a helpful message when no actors/elements exist
-- [ ] Validate element creation — disable "Add" when required fields are missing (e.g., no actors exist yet, no label provided)
-- [ ] Handle actor removal cascade — when an actor is removed, also remove all messages and notes referencing that actor
-- [ ] Prevent duplicate actor names/aliases
-- [ ] Handle large diagrams — ensure the preview area is scrollable
-- [ ] Responsive layout — ensure the app is usable on smaller screens (collapsible sidebar)
-- [ ] Keyboard accessibility — ensure all controls are keyboard-navigable
-- [ ] Add loading state for Mermaid rendering
+- [x] Handle empty state — show a helpful message when no actors/elements exist
+- [x] Validate element creation — disable "Add" when required fields are missing (e.g., no actors exist yet, no label provided)
+- [x] Handle actor removal cascade — when an actor is removed, also remove all messages and notes referencing that actor
+- [x] Prevent duplicate actor names/aliases
+- [x] Handle large diagrams — ensure the preview area is scrollable
+- [x] Responsive layout — ensure the app is usable on smaller screens (collapsible sidebar)
+- [x] Keyboard accessibility — ensure all controls are keyboard-navigable
+- [x] Add loading state for Mermaid rendering
 
 ## Phase 11: Build & Deploy
 

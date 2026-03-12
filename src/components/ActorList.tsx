@@ -64,9 +64,40 @@ export function ActorList({
   const [editName, setEditName] = useState("");
   const [editAlias, setEditAlias] = useState("");
 
+  const isDuplicateName = (name: string, excludeId?: string): boolean => {
+    if (!name.trim()) return false;
+    const lower = name.trim().toLowerCase();
+    return actors.some(
+      (a) =>
+        a.id !== excludeId &&
+        (a.name.toLowerCase() === lower ||
+          (a.alias && a.alias.toLowerCase() === lower))
+    );
+  };
+
+  const isDuplicateAlias = (alias: string, excludeId?: string): boolean => {
+    if (!alias.trim()) return false;
+    const lower = alias.trim().toLowerCase();
+    return actors.some(
+      (a) =>
+        a.id !== excludeId &&
+        (a.name.toLowerCase() === lower ||
+          (a.alias && a.alias.toLowerCase() === lower))
+    );
+  };
+
+  const newNameDuplicate = isDuplicateName(newName);
+  const newAliasDuplicate = isDuplicateAlias(newAlias);
+  const editNameDuplicate = editTarget
+    ? isDuplicateName(editName, editTarget.id)
+    : false;
+  const editAliasDuplicate = editTarget
+    ? isDuplicateAlias(editAlias, editTarget.id)
+    : false;
+
   const handleAdd = () => {
     const name = newName.trim();
-    if (!name) return;
+    if (!name || newNameDuplicate || newAliasDuplicate) return;
     const alias = newAlias.trim() || undefined;
     onAddActor(name, newType, alias);
     setNewName("");
@@ -89,7 +120,7 @@ export function ActorList({
   };
 
   const handleSaveEdit = () => {
-    if (editTarget && editName.trim()) {
+    if (editTarget && editName.trim() && !editNameDuplicate && !editAliasDuplicate) {
       const alias = editAlias.trim() || undefined;
       onRenameActor(editTarget.id, editName.trim(), alias);
       setEditTarget(null);
@@ -147,30 +178,34 @@ export function ActorList({
             </div>
 
             {/* Actions */}
-            <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+            <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
               <button
-                className="rounded p-0.5 text-muted-foreground hover:text-foreground"
+                className="rounded p-0.5 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 onClick={() => onReorderActor(actor.id, index - 1)}
                 disabled={index === 0}
+                aria-label={`Move ${actor.name} up`}
               >
                 <ChevronUpIcon className="h-3.5 w-3.5" />
               </button>
               <button
-                className="rounded p-0.5 text-muted-foreground hover:text-foreground"
+                className="rounded p-0.5 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 onClick={() => onReorderActor(actor.id, index + 1)}
                 disabled={index === actors.length - 1}
+                aria-label={`Move ${actor.name} down`}
               >
                 <ChevronDownIcon className="h-3.5 w-3.5" />
               </button>
               <button
-                className="rounded p-0.5 text-muted-foreground hover:text-foreground"
+                className="rounded p-0.5 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 onClick={() => openEditDialog(actor)}
+                aria-label={`Edit ${actor.name}`}
               >
                 <PencilIcon className="h-3.5 w-3.5" />
               </button>
               <button
-                className="rounded p-0.5 text-muted-foreground hover:text-destructive"
+                className="rounded p-0.5 text-muted-foreground hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 onClick={() => setRemoveTarget(actor)}
+                aria-label={`Remove ${actor.name}`}
               >
                 <Trash2Icon className="h-3.5 w-3.5" />
               </button>
@@ -189,12 +224,18 @@ export function ActorList({
             autoFocus
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
           />
+          {newNameDuplicate && (
+            <p className="text-xs text-destructive">Name already in use.</p>
+          )}
           <Input
             value={newAlias}
             onChange={(e) => setNewAlias(e.target.value)}
             placeholder="Alias (optional)"
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
           />
+          {newAliasDuplicate && (
+            <p className="text-xs text-destructive">Alias already in use.</p>
+          )}
           <Select
             value={newType}
             onValueChange={(v) => setNewType(v as ActorType)}
@@ -208,7 +249,7 @@ export function ActorList({
             </SelectContent>
           </Select>
           <div className="flex gap-1">
-            <Button size="sm" onClick={handleAdd} disabled={!newName.trim()}>
+            <Button size="sm" onClick={handleAdd} disabled={!newName.trim() || newNameDuplicate || newAliasDuplicate}>
               Add
             </Button>
             <Button
@@ -274,6 +315,9 @@ export function ActorList({
                 autoFocus
                 onKeyDown={(e) => e.key === "Enter" && handleSaveEdit()}
               />
+              {editNameDuplicate && (
+                <p className="text-xs text-destructive">Name already in use.</p>
+              )}
             </div>
             <div className="space-y-1">
               <label className="text-xs text-muted-foreground">
@@ -284,13 +328,16 @@ export function ActorList({
                 onChange={(e) => setEditAlias(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSaveEdit()}
               />
+              {editAliasDuplicate && (
+                <p className="text-xs text-destructive">Alias already in use.</p>
+              )}
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditTarget(null)}>
               Cancel
             </Button>
-            <Button onClick={handleSaveEdit} disabled={!editName.trim()}>
+            <Button onClick={handleSaveEdit} disabled={!editName.trim() || editNameDuplicate || editAliasDuplicate}>
               Save
             </Button>
           </DialogFooter>

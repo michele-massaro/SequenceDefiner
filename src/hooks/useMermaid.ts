@@ -7,6 +7,7 @@ let currentMermaidTheme: "default" | "dark" | null = null;
 export function useMermaid(code: string, theme: "light" | "dark" = "light") {
   const [svg, setSvg] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const [isRendering, setIsRendering] = useState(false);
   const currentRender = useRef(0);
 
   const mermaidTheme = theme === "dark" ? ("dark" as const) : ("default" as const);
@@ -18,8 +19,11 @@ export function useMermaid(code: string, theme: "light" | "dark" = "light") {
     if (!source.trim()) {
       setSvg("");
       setError(null);
+      setIsRendering(false);
       return;
     }
+
+    setIsRendering(true);
 
     if (currentMermaidTheme !== mTheme) {
       mermaid.initialize({
@@ -39,11 +43,13 @@ export function useMermaid(code: string, theme: "light" | "dark" = "light") {
       if (currentRender.current === renderId) {
         setSvg(rendered);
         setError(null);
+        setIsRendering(false);
       }
     } catch (err) {
       if (currentRender.current === renderId) {
         setSvg("");
         setError(err instanceof Error ? err.message : String(err));
+        setIsRendering(false);
       }
     }
   }, []);
@@ -52,5 +58,5 @@ export function useMermaid(code: string, theme: "light" | "dark" = "light") {
     render(code, mermaidTheme);
   }, [code, mermaidTheme, render]);
 
-  return { svg, error };
+  return { svg, error, isRendering };
 }

@@ -19,7 +19,7 @@ function App() {
   const { theme } = useTheme();
   const diagram = useDiagram(restoredState ?? undefined);
   const mermaidCode = useMemo(() => serialize(diagram.state), [diagram.state]);
-  const { svg, error } = useMermaid(mermaidCode, theme);
+  const { svg, error, isRendering } = useMermaid(mermaidCode, theme);
 
   useAutoSaveDiagram(diagram.state);
 
@@ -35,7 +35,7 @@ function App() {
         onNewSession={handleNewSession}
         onImport={diagram.loadState}
       />
-      <div className="flex flex-1 overflow-hidden">
+      <div className="relative flex flex-1 overflow-hidden">
         <Sidebar
             actors={diagram.state.actors}
             elements={diagram.state.elements}
@@ -48,7 +48,7 @@ function App() {
             onReorderElement={diagram.reorderElement}
           />
         <div className="flex flex-1 flex-col overflow-hidden">
-          <DiagramPreview svg={svg} error={error} />
+          <DiagramPreview svg={svg} error={error} isRendering={isRendering} />
           <BottomBar
             actors={diagram.state.actors}
             onAddElement={diagram.addElement}

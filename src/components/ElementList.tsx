@@ -77,6 +77,7 @@ export function ElementList({
       <div className="space-y-1">
         {elements.map((element, index) => {
           const badge = getElementBadge(element);
+          const summary = getElementSummary(element, actors);
           return (
             <div
               key={element.id}
@@ -91,28 +92,31 @@ export function ElementList({
 
               {/* Summary */}
               <div className="min-w-0 flex-1 truncate text-sm">
-                {getElementSummary(element, actors)}
+                {summary}
               </div>
 
               {/* Actions */}
-              <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+              <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
                 <button
-                  className="rounded p-0.5 text-muted-foreground hover:text-foreground"
+                  className="rounded p-0.5 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   onClick={() => onReorderElement(element.id, index - 1)}
                   disabled={index === 0}
+                  aria-label={`Move element up: ${summary}`}
                 >
                   <ChevronUpIcon className="h-3.5 w-3.5" />
                 </button>
                 <button
-                  className="rounded p-0.5 text-muted-foreground hover:text-foreground"
+                  className="rounded p-0.5 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   onClick={() => onReorderElement(element.id, index + 1)}
                   disabled={index === elements.length - 1}
+                  aria-label={`Move element down: ${summary}`}
                 >
                   <ChevronDownIcon className="h-3.5 w-3.5" />
                 </button>
                 <button
-                  className="rounded p-0.5 text-muted-foreground hover:text-destructive"
+                  className="rounded p-0.5 text-muted-foreground hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   onClick={() => onRemoveElement(element.id)}
+                  aria-label={`Remove element: ${summary}`}
                 >
                   <Trash2Icon className="h-3.5 w-3.5" />
                 </button>
