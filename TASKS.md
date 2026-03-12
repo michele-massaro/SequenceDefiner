@@ -93,7 +93,7 @@ Tasks are ordered by dependency. Each phase builds on the previous one.
 
 ## Phase 11: Build & Deploy
 
-- [ ] Configure Vite production build
-- [ ] Test production build locally with `npm run preview`
-- [ ] Add meta tags and favicon
-- [ ] Set up deployment (e.g., Vercel, Netlify, or GitHub Pages)
+- [x] Configure Vite production build
+- [x] Test production build locally with `npm run preview`
+- [x] Add meta tags and favicon
+- [x] Set up deployment (e.g., Vercel, Netlify, or GitHub Pages)
