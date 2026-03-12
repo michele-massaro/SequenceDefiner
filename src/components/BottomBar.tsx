@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -92,6 +92,21 @@ export function BottomBar({ actors, onAddElement }: BottomBarProps) {
 
   const actorLabel = (actor: Actor) => actor.alias || actor.name;
 
+  const actorItems = useMemo(
+    () => actors.map((a) => ({ value: a.id, label: actorLabel(a) })),
+    [actors]
+  );
+
+  const noteActorItems2 = useMemo(
+    () => [
+      { value: "", label: "None" },
+      ...actors
+        .filter((a) => a.id !== noteActorId)
+        .map((a) => ({ value: a.id, label: actorLabel(a) })),
+    ],
+    [actors, noteActorId]
+  );
+
   return (
     <div className="border-t p-3">
       <div className="mb-3 flex gap-1">
@@ -121,7 +136,7 @@ export function BottomBar({ actors, onAddElement }: BottomBarProps) {
         <div className="flex flex-wrap items-end gap-2">
           <div className="space-y-1">
             <label className="text-xs text-muted-foreground">From</label>
-            <Select value={msgFrom} onValueChange={(v) => v && setMsgFrom(v)}>
+            <Select value={msgFrom} onValueChange={(v) => v && setMsgFrom(v)} items={actorItems}>
               <SelectTrigger>
                 <SelectValue placeholder="Select actor" />
               </SelectTrigger>
@@ -136,7 +151,7 @@ export function BottomBar({ actors, onAddElement }: BottomBarProps) {
           </div>
           <div className="space-y-1">
             <label className="text-xs text-muted-foreground">To</label>
-            <Select value={msgTo} onValueChange={(v) => v && setMsgTo(v)}>
+            <Select value={msgTo} onValueChange={(v) => v && setMsgTo(v)} items={actorItems}>
               <SelectTrigger>
                 <SelectValue placeholder="Select actor" />
               </SelectTrigger>
@@ -189,7 +204,7 @@ export function BottomBar({ actors, onAddElement }: BottomBarProps) {
         <div className="flex flex-wrap items-end gap-2">
           <div className="space-y-1">
             <label className="text-xs text-muted-foreground">Actor</label>
-            <Select value={actActorId} onValueChange={(v) => v && setActActorId(v)}>
+            <Select value={actActorId} onValueChange={(v) => v && setActActorId(v)} items={actorItems}>
               <SelectTrigger>
                 <SelectValue placeholder="Select actor" />
               </SelectTrigger>
@@ -257,7 +272,7 @@ export function BottomBar({ actors, onAddElement }: BottomBarProps) {
           </div>
           <div className="space-y-1">
             <label className="text-xs text-muted-foreground">Actor</label>
-            <Select value={noteActorId} onValueChange={(v) => v && setNoteActorId(v)}>
+            <Select value={noteActorId} onValueChange={(v) => v && setNoteActorId(v)} items={actorItems}>
               <SelectTrigger>
                 <SelectValue placeholder="Select actor" />
               </SelectTrigger>
@@ -275,7 +290,7 @@ export function BottomBar({ actors, onAddElement }: BottomBarProps) {
               <label className="text-xs text-muted-foreground">
                 Actor 2 (optional)
               </label>
-              <Select value={noteActorId2} onValueChange={(v) => setNoteActorId2(v ?? "")}>
+              <Select value={noteActorId2} onValueChange={(v) => setNoteActorId2(v ?? "")} items={noteActorItems2}>
                 <SelectTrigger>
                   <SelectValue placeholder="None" />
                 </SelectTrigger>
