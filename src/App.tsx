@@ -26,13 +26,23 @@ function App() {
   const mermaidCode = useMemo(() => serialize(diagram.state), [diagram.state]);
   const { svg, error, isRendering } = useMermaid(mermaidCode, theme);
   const [sidebarWidth, setSidebarWidth] = useState(SIDEBAR_DEFAULT_WIDTH);
+  const [bottomBarKey, setBottomBarKey] = useState(0);
 
   useAutoSaveDiagram(diagram.state);
 
   const handleNewSession = useCallback(() => {
     diagram.resetDiagram();
     clearDiagramStorage();
+    setBottomBarKey((k) => k + 1);
   }, [diagram.resetDiagram]);
+
+  const handleImport = useCallback(
+    (state: Parameters<typeof diagram.loadState>[0]) => {
+      diagram.loadState(state);
+      setBottomBarKey((k) => k + 1);
+    },
+    [diagram.loadState]
+  );
 
   const handleSidebarResize = useCallback((delta: number) => {
     setSidebarWidth((w) =>
@@ -45,7 +55,7 @@ function App() {
       <TopBar
         mermaidCode={mermaidCode}
         onNewSession={handleNewSession}
-        onImport={diagram.loadState}
+        onImport={handleImport}
       />
       <div className="relative flex flex-1 overflow-hidden">
         <Sidebar
@@ -68,6 +78,7 @@ function App() {
         <div className="flex flex-1 flex-col overflow-hidden">
           <DiagramPreview svg={svg} error={error} isRendering={isRendering} />
           <BottomBar
+            key={bottomBarKey}
             actors={diagram.state.actors}
             onAddElement={diagram.addElement}
           />
