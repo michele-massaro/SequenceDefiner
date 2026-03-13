@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { ArrowLeftRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -149,6 +150,22 @@ export function BottomBar({ actors, onAddElement }: BottomBarProps) {
               </SelectContent>
             </Select>
           </div>
+          <Button
+            variant="outline"
+            size="icon"
+            className="mt-5 shrink-0"
+            disabled={!msgFrom || !msgTo}
+            onClick={() => {
+              const prevFrom = msgFrom;
+              const prevTo = msgTo;
+              setMsgFrom(prevTo);
+              setMsgTo(prevFrom);
+            }}
+            aria-label="Swap From and To actors"
+            title="Swap actors"
+          >
+            <ArrowLeftRightIcon className="h-4 w-4" />
+          </Button>
           <div className="space-y-1">
             <label className="text-xs text-muted-foreground">To</label>
             <Select value={msgTo} onValueChange={(v) => v && setMsgTo(v)} items={actorItems}>
