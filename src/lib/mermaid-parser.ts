@@ -138,12 +138,11 @@ export function parse(input: string): DiagramState {
     if (actorResult) {
       const actor: Actor = {
         id: generateParserId(),
-        name: actorResult.name,
-        alias: actorResult.alias,
+        name: actorResult.alias ?? actorResult.name,
         type: actorResult.type,
       };
       actors.push(actor);
-      actorsByName.set(actor.name, actor);
+      actorsByName.set(actorResult.name, actor);
       continue;
     }
 

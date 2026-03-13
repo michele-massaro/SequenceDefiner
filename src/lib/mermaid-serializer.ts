@@ -2,15 +2,12 @@ import type { Actor, DiagramElement, DiagramState } from "@/lib/types";
 
 function serializeActor(actor: Actor): string {
   const keyword = actor.type === "actor" ? "actor" : "participant";
-  if (actor.alias) {
-    return `    ${keyword} ${actor.name} as ${actor.alias}`;
-  }
-  return `    ${keyword} ${actor.name}`;
+  return `    ${keyword} ${actor.id} as ${actor.name}`;
 }
 
 function resolveActorName(actorId: string, actors: Actor[]): string {
   const actor = actors.find((a) => a.id === actorId);
-  return actor ? actor.name : actorId;
+  return actor ? actor.id : actorId;
 }
 
 function serializeElement(element: DiagramElement, actors: Actor[]): string {

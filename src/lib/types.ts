@@ -3,7 +3,6 @@ export type ActorType = "participant" | "actor";
 export interface Actor {
   id: string;
   name: string;
-  alias?: string;
   type: ActorType;
 }
 

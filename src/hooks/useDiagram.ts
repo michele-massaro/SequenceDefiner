@@ -20,8 +20,8 @@ export function useDiagram(initialState?: DiagramState) {
   const [state, setState] = useState<DiagramState>(initialState ?? emptyState);
 
   const addActor = useCallback(
-    (name: string, type: ActorType = "participant", alias?: string) => {
-      const actor: Actor = { id: generateId(), name, type, alias };
+    (name: string, type: ActorType = "participant") => {
+      const actor: Actor = { id: generateId(), name, type };
       setState((prev) => ({ ...prev, actors: [...prev.actors, actor] }));
     },
     []
@@ -40,11 +40,11 @@ export function useDiagram(initialState?: DiagramState) {
   }, []);
 
   const renameActor = useCallback(
-    (actorId: string, name: string, alias?: string) => {
+    (actorId: string, name: string) => {
       setState((prev) => ({
         ...prev,
         actors: prev.actors.map((a) =>
-          a.id === actorId ? { ...a, name, alias } : a
+          a.id === actorId ? { ...a, name } : a
         ),
       }));
     },
