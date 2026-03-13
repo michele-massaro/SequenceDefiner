@@ -135,7 +135,7 @@ export function BottomBar({ actors, onAddElement }: BottomBarProps) {
 
       {activeTab === "message" && actors.length > 0 && (
         <div className="flex flex-wrap items-end gap-2">
-          <div className="space-y-1">
+          <div className="flex flex-col gap-1">
             <label className="text-xs text-muted-foreground">From</label>
             <Select value={msgFrom} onValueChange={(v) => v && setMsgFrom(v)} items={actorItems}>
               <SelectTrigger>
@@ -150,23 +150,25 @@ export function BottomBar({ actors, onAddElement }: BottomBarProps) {
               </SelectContent>
             </Select>
           </div>
-          <Button
-            variant="outline"
-            size="icon"
-            className="mt-5 shrink-0"
-            disabled={!msgFrom || !msgTo}
-            onClick={() => {
-              const prevFrom = msgFrom;
-              const prevTo = msgTo;
-              setMsgFrom(prevTo);
-              setMsgTo(prevFrom);
-            }}
-            aria-label="Swap From and To actors"
-            title="Swap actors"
-          >
-            <ArrowLeftRightIcon className="h-4 w-4" />
-          </Button>
-          <div className="space-y-1">
+          <div className="flex flex-col gap-1">
+            <span className="h-4 shrink-0" aria-hidden="true" />
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={!msgFrom || !msgTo}
+              onClick={() => {
+                const prevFrom = msgFrom;
+                const prevTo = msgTo;
+                setMsgFrom(prevTo);
+                setMsgTo(prevFrom);
+              }}
+              aria-label="Swap From and To actors"
+              title="Swap actors"
+            >
+              <ArrowLeftRightIcon className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="flex flex-col gap-1">
             <label className="text-xs text-muted-foreground">To</label>
             <Select value={msgTo} onValueChange={(v) => v && setMsgTo(v)} items={actorItems}>
               <SelectTrigger>
@@ -181,7 +183,7 @@ export function BottomBar({ actors, onAddElement }: BottomBarProps) {
               </SelectContent>
             </Select>
           </div>
-          <div className="min-w-0 flex-1 space-y-1">
+          <div className="min-w-0 flex-1 flex flex-col gap-1">
             <label className="text-xs text-muted-foreground">Label</label>
             <Input
               value={msgLabel}
@@ -190,7 +192,7 @@ export function BottomBar({ actors, onAddElement }: BottomBarProps) {
               onKeyDown={(e) => e.key === "Enter" && handleAddMessage()}
             />
           </div>
-          <div className="space-y-1">
+          <div className="flex flex-col gap-1">
             <label className="text-xs text-muted-foreground">Arrow Type</label>
             <Select
               value={msgArrowType}
@@ -208,18 +210,21 @@ export function BottomBar({ actors, onAddElement }: BottomBarProps) {
               </SelectContent>
             </Select>
           </div>
-          <Button
-            onClick={handleAddMessage}
-            disabled={!msgFrom || !msgTo || !msgLabel.trim()}
-          >
-            Add
-          </Button>
+          <div className="flex flex-col gap-1">
+            <span className="h-4 shrink-0" aria-hidden="true" />
+            <Button
+              onClick={handleAddMessage}
+              disabled={!msgFrom || !msgTo || !msgLabel.trim()}
+            >
+              Add
+            </Button>
+          </div>
         </div>
       )}
 
       {activeTab === "activation" && actors.length > 0 && (
         <div className="flex flex-wrap items-end gap-2">
-          <div className="space-y-1">
+          <div className="flex flex-col gap-1">
             <label className="text-xs text-muted-foreground">Actor</label>
             <Select value={actActorId} onValueChange={(v) => v && setActActorId(v)} items={actorItems}>
               <SelectTrigger>
@@ -234,7 +239,7 @@ export function BottomBar({ actors, onAddElement }: BottomBarProps) {
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-1">
+          <div className="flex flex-col gap-1">
             <label className="text-xs text-muted-foreground">Type</label>
             <div className="flex h-8 overflow-hidden rounded-lg border" role="group" aria-label="Activation type">
               <button
@@ -261,15 +266,18 @@ export function BottomBar({ actors, onAddElement }: BottomBarProps) {
               </button>
             </div>
           </div>
-          <Button onClick={handleAddActivation} disabled={!actActorId}>
-            Add
-          </Button>
+          <div className="flex flex-col gap-1">
+            <span className="h-4 shrink-0" aria-hidden="true" />
+            <Button onClick={handleAddActivation} disabled={!actActorId}>
+              Add
+            </Button>
+          </div>
         </div>
       )}
 
       {activeTab === "note" && actors.length > 0 && (
         <div className="flex flex-wrap items-end gap-2">
-          <div className="space-y-1">
+          <div className="flex flex-col gap-1">
             <label className="text-xs text-muted-foreground">Position</label>
             <Select
               value={notePosition}
@@ -287,7 +295,7 @@ export function BottomBar({ actors, onAddElement }: BottomBarProps) {
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-1">
+          <div className="flex flex-col gap-1">
             <label className="text-xs text-muted-foreground">Actor</label>
             <Select value={noteActorId} onValueChange={(v) => v && setNoteActorId(v)} items={actorItems}>
               <SelectTrigger>
@@ -303,7 +311,7 @@ export function BottomBar({ actors, onAddElement }: BottomBarProps) {
             </Select>
           </div>
           {notePosition === "over" && (
-            <div className="space-y-1">
+            <div className="flex flex-col gap-1">
               <label className="text-xs text-muted-foreground">
                 Actor 2 (optional)
               </label>
@@ -324,7 +332,7 @@ export function BottomBar({ actors, onAddElement }: BottomBarProps) {
               </Select>
             </div>
           )}
-          <div className="min-w-0 flex-1 space-y-1">
+          <div className="min-w-0 flex-1 flex flex-col gap-1">
             <label className="text-xs text-muted-foreground">Text</label>
             <Input
               value={noteText}
@@ -333,12 +341,15 @@ export function BottomBar({ actors, onAddElement }: BottomBarProps) {
               onKeyDown={(e) => e.key === "Enter" && handleAddNote()}
             />
           </div>
-          <Button
-            onClick={handleAddNote}
-            disabled={!noteActorId || !noteText.trim()}
-          >
-            Add
-          </Button>
+          <div className="flex flex-col gap-1">
+            <span className="h-4 shrink-0" aria-hidden="true" />
+            <Button
+              onClick={handleAddNote}
+              disabled={!noteActorId || !noteText.trim()}
+            >
+              Add
+            </Button>
+          </div>
         </div>
       )}
     </div>
