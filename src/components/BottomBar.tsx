@@ -14,15 +14,82 @@ import type { Actor, ArrowType, DiagramElement } from "@/lib/types";
 type Tab = "message" | "activation" | "note";
 
 const ARROW_TYPES: { value: ArrowType; label: string }[] = [
-  { value: "->>", label: "->>  Solid line" },
-  { value: "->", label: "->   Solid open" },
-  { value: "-->>", label: "-->> Dotted line" },
-  { value: "-->", label: "-->  Dotted open" },
-  { value: "-x", label: "-x   Solid cross" },
-  { value: "--x", label: "--x  Dotted cross" },
-  { value: "-)", label: "-)   Solid async" },
-  { value: "--)", label: "--)  Dotted async" },
+  { value: "->>", label: "Solid line" },
+  { value: "->", label: "Solid open" },
+  { value: "-->>", label: "Dotted line" },
+  { value: "-->", label: "Dotted open" },
+  { value: "-x", label: "Solid cross" },
+  { value: "--x", label: "Dotted cross" },
+  { value: "-)", label: "Solid async" },
+  { value: "--)", label: "Dotted async" },
 ];
+
+const ARROW_TYPE_LABEL: Record<ArrowType, string> = Object.fromEntries(
+  ARROW_TYPES.map((t) => [t.value, t.label])
+) as Record<ArrowType, string>;
+
+function ArrowTypeIcon({ type }: { type: ArrowType }) {
+  const dotted = type.startsWith("--");
+  const lineProps = {
+    x1: 2,
+    y1: 8,
+    x2: 50,
+    y2: 8,
+    stroke: "currentColor",
+    strokeWidth: 1.5,
+    strokeLinecap: "round" as const,
+    ...(dotted ? { strokeDasharray: "4 2.5" } : {}),
+  };
+
+  const arrowhead = (() => {
+    if (type === "->>" || type === "-->>") {
+      return <polygon points="50,4.5 62,8 50,11.5" fill="currentColor" />;
+    }
+    if (type === "->" || type === "-->") {
+      return (
+        <polyline
+          points="50,4.5 62,8 50,11.5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.5}
+          strokeLinejoin="round"
+        />
+      );
+    }
+    if (type === "-x" || type === "--x") {
+      return (
+        <>
+          <line x1={52} y1={4} x2={62} y2={12} stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" />
+          <line x1={52} y1={12} x2={62} y2={4} stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" />
+        </>
+      );
+    }
+    if (type === "-)" || type === "--)") {
+      return (
+        <path
+          d="M52,4.5 Q62,8 52,11.5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.5}
+        />
+      );
+    }
+    return null;
+  })();
+
+  return (
+    <svg
+      width="60"
+      height="16"
+      viewBox="0 0 64 16"
+      aria-hidden="true"
+      className="shrink-0"
+    >
+      <line {...lineProps} />
+      {arrowhead}
+    </svg>
+  );
+}
 
 interface BottomBarProps {
   actors: Actor[];
@@ -199,12 +266,16 @@ export function BottomBar({ actors, onAddElement }: BottomBarProps) {
               onValueChange={(v) => setMsgArrowType(v as ArrowType)}
             >
               <SelectTrigger>
-                <SelectValue />
+                <span className="flex flex-1 items-center gap-2" data-slot="select-value">
+                  <ArrowTypeIcon type={msgArrowType} />
+                  <span>{ARROW_TYPE_LABEL[msgArrowType]}</span>
+                </span>
               </SelectTrigger>
               <SelectContent>
                 {ARROW_TYPES.map((t) => (
                   <SelectItem key={t.value} value={t.value}>
-                    {t.label}
+                    <ArrowTypeIcon type={t.value} />
+                    <span>{t.label}</span>
                   </SelectItem>
                 ))}
               </SelectContent>
