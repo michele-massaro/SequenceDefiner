@@ -23,6 +23,7 @@ interface SidebarProps {
   onUpdateActorType: (actorId: string, type: ActorType) => void;
   onRemoveElement: (elementId: string) => void;
   onReorderElement: (elementId: string, newIndex: number) => void;
+  onUpdateElement: (element: DiagramElement) => void;
 }
 
 export function Sidebar({
@@ -36,6 +37,7 @@ export function Sidebar({
   onUpdateActorType,
   onRemoveElement,
   onReorderElement,
+  onUpdateElement,
 }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [actorPanelHeight, setActorPanelHeight] = useState(
@@ -120,6 +122,7 @@ export function Sidebar({
               actors={actors}
               onRemoveElement={onRemoveElement}
               onReorderElement={onReorderElement}
+              onUpdateElement={onUpdateElement}
             />
           </ScrollArea>
         </div>

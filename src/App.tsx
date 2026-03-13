@@ -69,6 +69,7 @@ function App() {
           onUpdateActorType={diagram.updateActorType}
           onRemoveElement={diagram.removeElement}
           onReorderElement={diagram.reorderElement}
+          onUpdateElement={diagram.updateElement}
         />
         <ResizableDivider
           orientation="vertical"
