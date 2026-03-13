@@ -95,6 +95,18 @@ export function useDiagram(initialState?: DiagramState) {
     }));
   }, []);
 
+  const updateElement = useCallback(
+    (updatedElement: DiagramElement) => {
+      setState((prev) => ({
+        ...prev,
+        elements: prev.elements.map((el) =>
+          el.id === updatedElement.id ? updatedElement : el
+        ),
+      }));
+    },
+    []
+  );
+
   const reorderElement = useCallback((elementId: string, newIndex: number) => {
     setState((prev) => {
       const elements = [...prev.elements];
@@ -124,6 +136,7 @@ export function useDiagram(initialState?: DiagramState) {
     updateActorType,
     addElement,
     removeElement,
+    updateElement,
     reorderElement,
     resetDiagram,
     loadState,
