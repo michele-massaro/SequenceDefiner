@@ -54,6 +54,7 @@ function App() {
     <div className="flex h-screen flex-col">
       <TopBar
         mermaidCode={mermaidCode}
+        svg={svg}
         onNewSession={handleNewSession}
         onImport={handleImport}
       />
