@@ -1,8 +1,8 @@
+import { useState } from "react";
 import type { Actor, DiagramElement, ArrowType } from "@/lib/types";
 import {
   Trash2Icon,
-  ChevronUpIcon,
-  ChevronDownIcon,
+  GripVerticalIcon,
 } from "lucide-react";
 
 interface ElementListProps {
@@ -64,6 +64,44 @@ export function ElementList({
   onRemoveElement,
   onReorderElement,
 }: ElementListProps) {
+  const [draggedElementId, setDraggedElementId] = useState<string | null>(null);
+  const [dragOverElementId, setDragOverElementId] = useState<string | null>(null);
+
+  const handleDragStart = (e: React.DragEvent, elementId: string) => {
+    setDraggedElementId(elementId);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e: React.DragEvent, elementId: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    if (elementId !== draggedElementId) {
+      setDragOverElementId(elementId);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    const related = e.relatedTarget as Node | null;
+    if (!related || !e.currentTarget.contains(related)) {
+      setDragOverElementId(null);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent, targetElementId: string) => {
+    e.preventDefault();
+    if (draggedElementId && draggedElementId !== targetElementId) {
+      const newIndex = elements.findIndex((el) => el.id === targetElementId);
+      onReorderElement(draggedElementId, newIndex);
+    }
+    setDraggedElementId(null);
+    setDragOverElementId(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedElementId(null);
+    setDragOverElementId(null);
+  };
+
   if (elements.length === 0) {
     return (
       <div className="p-3 pt-0">
@@ -81,8 +119,37 @@ export function ElementList({
           return (
             <div
               key={element.id}
-              className="group flex items-center gap-1.5 rounded-md px-2 py-1 hover:bg-muted"
+              draggable
+              onDragStart={(e) => handleDragStart(e, element.id)}
+              onDragOver={(e) => handleDragOver(e, element.id)}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleDrop(e, element.id)}
+              onDragEnd={handleDragEnd}
+              className={`group flex items-center gap-1.5 rounded-md px-2 py-1 transition-opacity ${
+                draggedElementId === element.id
+                  ? "opacity-40"
+                  : dragOverElementId === element.id
+                    ? "bg-accent"
+                    : "hover:bg-muted"
+              }`}
             >
+              {/* Drag handle */}
+              <GripVerticalIcon
+                className="h-3.5 w-3.5 shrink-0 cursor-grab text-muted-foreground/40 hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:cursor-grabbing"
+                role="button"
+                tabIndex={0}
+                aria-label={`Reorder element: ${summary}. Use arrow keys to move.`}
+                onKeyDown={(e) => {
+                  if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    if (index > 0) onReorderElement(element.id, index - 1);
+                  } else if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    if (index < elements.length - 1) onReorderElement(element.id, index + 1);
+                  }
+                }}
+              />
+
               {/* Type badge */}
               <span
                 className={`shrink-0 rounded px-1 py-0.5 text-[10px] font-medium leading-none ${badge.className}`}
@@ -97,22 +164,6 @@ export function ElementList({
 
               {/* Actions */}
               <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
-                <button
-                  className="rounded p-0.5 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  onClick={() => onReorderElement(element.id, index - 1)}
-                  disabled={index === 0}
-                  aria-label={`Move element up: ${summary}`}
-                >
-                  <ChevronUpIcon className="h-3.5 w-3.5" />
-                </button>
-                <button
-                  className="rounded p-0.5 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  onClick={() => onReorderElement(element.id, index + 1)}
-                  disabled={index === elements.length - 1}
-                  aria-label={`Move element down: ${summary}`}
-                >
-                  <ChevronDownIcon className="h-3.5 w-3.5" />
-                </button>
                 <button
                   className="rounded p-0.5 text-muted-foreground hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   onClick={() => onRemoveElement(element.id)}

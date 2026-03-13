@@ -27,8 +27,7 @@ import {
   PlusIcon,
   Trash2Icon,
   PencilIcon,
-  ChevronUpIcon,
-  ChevronDownIcon,
+  GripVerticalIcon,
   UserIcon,
   BoxIcon,
 } from "lucide-react";
@@ -50,6 +49,45 @@ export function ActorList({
   onReorderActor,
   onUpdateActorType,
 }: ActorListProps) {
+  // Drag-and-drop state
+  const [draggedActorId, setDraggedActorId] = useState<string | null>(null);
+  const [dragOverActorId, setDragOverActorId] = useState<string | null>(null);
+
+  const handleDragStart = (e: React.DragEvent, actorId: string) => {
+    setDraggedActorId(actorId);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e: React.DragEvent, actorId: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    if (actorId !== draggedActorId) {
+      setDragOverActorId(actorId);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    const related = e.relatedTarget as Node | null;
+    if (!related || !e.currentTarget.contains(related)) {
+      setDragOverActorId(null);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent, targetActorId: string) => {
+    e.preventDefault();
+    if (draggedActorId && draggedActorId !== targetActorId) {
+      const newIndex = actors.findIndex((a) => a.id === targetActorId);
+      onReorderActor(draggedActorId, newIndex);
+    }
+    setDraggedActorId(null);
+    setDragOverActorId(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedActorId(null);
+    setDragOverActorId(null);
+  };
+
   // Add actor form state
   const [showAddForm, setShowAddForm] = useState(false);
   const [newName, setNewName] = useState("");
@@ -116,8 +154,37 @@ export function ActorList({
         {actors.map((actor, index) => (
           <div
             key={actor.id}
-            className="group flex items-center gap-1.5 rounded-md px-2 py-1 hover:bg-muted"
+            draggable
+            onDragStart={(e) => handleDragStart(e, actor.id)}
+            onDragOver={(e) => handleDragOver(e, actor.id)}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => handleDrop(e, actor.id)}
+            onDragEnd={handleDragEnd}
+            className={`group flex items-center gap-1.5 rounded-md px-2 py-1 transition-opacity ${
+              draggedActorId === actor.id
+                ? "opacity-40"
+                : dragOverActorId === actor.id
+                  ? "bg-accent"
+                  : "hover:bg-muted"
+            }`}
           >
+            {/* Drag handle */}
+            <GripVerticalIcon
+              className="h-3.5 w-3.5 shrink-0 cursor-grab text-muted-foreground/40 hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:cursor-grabbing"
+              role="button"
+              tabIndex={0}
+              aria-label={`Reorder ${actor.name}. Use arrow keys to move.`}
+              onKeyDown={(e) => {
+                if (e.key === "ArrowUp") {
+                  e.preventDefault();
+                  if (index > 0) onReorderActor(actor.id, index - 1);
+                } else if (e.key === "ArrowDown") {
+                  e.preventDefault();
+                  if (index < actors.length - 1) onReorderActor(actor.id, index + 1);
+                }
+              }}
+            />
+
             {/* Type icon */}
             <TooltipProvider delay={300}>
               <Tooltip>
@@ -152,22 +219,6 @@ export function ActorList({
 
             {/* Actions */}
             <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
-              <button
-                className="rounded p-0.5 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                onClick={() => onReorderActor(actor.id, index - 1)}
-                disabled={index === 0}
-                aria-label={`Move ${actor.name} up`}
-              >
-                <ChevronUpIcon className="h-3.5 w-3.5" />
-              </button>
-              <button
-                className="rounded p-0.5 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                onClick={() => onReorderActor(actor.id, index + 1)}
-                disabled={index === actors.length - 1}
-                aria-label={`Move ${actor.name} down`}
-              >
-                <ChevronDownIcon className="h-3.5 w-3.5" />
-              </button>
               <button
                 className="rounded p-0.5 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 onClick={() => openEditDialog(actor)}
