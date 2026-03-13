@@ -47,7 +47,7 @@ describe("round-trip: serialize → parse", () => {
     expect(parsed.elements).toEqual([]);
   });
 
-  it("round-trips actors without aliases", () => {
+  it("round-trips actors — names are preserved as display names", () => {
     const original: DiagramState = {
       actors: [
         { id: "a1", name: "Alice", type: "participant" },
@@ -62,11 +62,11 @@ describe("round-trip: serialize → parse", () => {
     expect(parsedStripped.actors).toEqual(originalStripped.actors);
   });
 
-  it("round-trips actors with aliases", () => {
+  it("round-trips actors with spaces in names", () => {
     const original: DiagramState = {
       actors: [
-        { id: "a1", name: "A", alias: "Alice", type: "participant" },
-        { id: "a2", name: "B", alias: "Bob", type: "actor" },
+        { id: "a1", name: "Alice Smith", type: "participant" },
+        { id: "a2", name: "Bob Jones", type: "actor" },
       ],
       elements: [],
     };
@@ -112,8 +112,8 @@ describe("round-trip: serialize → parse", () => {
   it("round-trips a complete diagram", () => {
     const original: DiagramState = {
       actors: [
-        { id: "a1", name: "A", alias: "Alice", type: "participant" },
-        { id: "a2", name: "B", alias: "Bob", type: "actor" },
+        { id: "a1", name: "Alice", type: "participant" },
+        { id: "a2", name: "Bob", type: "actor" },
       ],
       elements: [
         {
@@ -202,5 +202,24 @@ describe("round-trip: parse → serialize → parse", () => {
     const stripped2 = stripIds(parsed2);
     expect(stripped2.actors).toEqual(stripped1.actors);
     expect(stripped2.elements).toEqual(stripped1.elements);
+  });
+
+  it("correctly handles a diagram with plain participant names (no alias) on import", () => {
+    const input = `sequenceDiagram
+    participant Alice
+    participant Bob
+    Alice->>Bob: Hello`;
+
+    const parsed1 = parse(input);
+    expect(parsed1.actors[0].name).toBe("Alice");
+    expect(parsed1.actors[1].name).toBe("Bob");
+
+    const serialized = serialize(parsed1);
+    resetParserIdCounter();
+    const parsed2 = parse(serialized);
+
+    expect(parsed2.actors[0].name).toBe("Alice");
+    expect(parsed2.actors[1].name).toBe("Bob");
+    expect(parsed2.elements).toHaveLength(1);
   });
 });

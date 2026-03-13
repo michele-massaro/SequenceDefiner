@@ -90,7 +90,7 @@ export function BottomBar({ actors, onAddElement }: BottomBarProps) {
     setNoteText("");
   };
 
-  const actorLabel = (actor: Actor) => actor.alias || actor.name;
+  const actorLabel = (actor: Actor) => actor.name;
 
   const actorItems = useMemo(
     () => actors.map((a) => ({ value: a.id, label: actorLabel(a) })),

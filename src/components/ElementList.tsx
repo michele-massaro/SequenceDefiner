@@ -25,7 +25,7 @@ const arrowSymbols: Record<ArrowType, string> = {
 
 function getActorName(actors: Actor[], actorId: string): string {
   const actor = actors.find((a) => a.id === actorId);
-  return actor?.alias || actor?.name || actorId;
+  return actor?.name || actorId;
 }
 
 function getElementSummary(element: DiagramElement, actors: Actor[]): string {

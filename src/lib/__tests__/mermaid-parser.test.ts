@@ -19,23 +19,20 @@ describe("mermaid-parser", () => {
     const result = parse(input);
     expect(result.actors).toHaveLength(2);
     expect(result.actors[0].name).toBe("Alice");
-    expect(result.actors[0].alias).toBeUndefined();
     expect(result.actors[0].type).toBe("participant");
     expect(result.actors[1].name).toBe("Bob");
     expect(result.actors[1].type).toBe("participant");
   });
 
-  it("parses participants with aliases", () => {
+  it("parses participants with aliases — alias becomes the display name", () => {
     const input = `sequenceDiagram
     participant A as Alice
     actor B as Bob`;
     const result = parse(input);
     expect(result.actors).toHaveLength(2);
-    expect(result.actors[0].name).toBe("A");
-    expect(result.actors[0].alias).toBe("Alice");
+    expect(result.actors[0].name).toBe("Alice");
     expect(result.actors[0].type).toBe("participant");
-    expect(result.actors[1].name).toBe("B");
-    expect(result.actors[1].alias).toBe("Bob");
+    expect(result.actors[1].name).toBe("Bob");
     expect(result.actors[1].type).toBe("actor");
   });
 

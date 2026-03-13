@@ -35,9 +35,9 @@ import {
 
 interface ActorListProps {
   actors: Actor[];
-  onAddActor: (name: string, type: ActorType, alias?: string) => void;
+  onAddActor: (name: string, type: ActorType) => void;
   onRemoveActor: (actorId: string) => void;
-  onRenameActor: (actorId: string, name: string, alias?: string) => void;
+  onRenameActor: (actorId: string, name: string) => void;
   onReorderActor: (actorId: string, newIndex: number) => void;
   onUpdateActorType: (actorId: string, type: ActorType) => void;
 }
@@ -53,7 +53,6 @@ export function ActorList({
   // Add actor form state
   const [showAddForm, setShowAddForm] = useState(false);
   const [newName, setNewName] = useState("");
-  const [newAlias, setNewAlias] = useState("");
   const [newType, setNewType] = useState<ActorType>("participant");
 
   // Remove confirmation dialog
@@ -62,7 +61,6 @@ export function ActorList({
   // Edit dialog
   const [editTarget, setEditTarget] = useState<Actor | null>(null);
   const [editName, setEditName] = useState("");
-  const [editAlias, setEditAlias] = useState("");
 
   const isDuplicateName = (name: string, excludeId?: string): boolean => {
     if (!name.trim()) return false;
@@ -70,38 +68,20 @@ export function ActorList({
     return actors.some(
       (a) =>
         a.id !== excludeId &&
-        (a.name.toLowerCase() === lower ||
-          (a.alias && a.alias.toLowerCase() === lower))
-    );
-  };
-
-  const isDuplicateAlias = (alias: string, excludeId?: string): boolean => {
-    if (!alias.trim()) return false;
-    const lower = alias.trim().toLowerCase();
-    return actors.some(
-      (a) =>
-        a.id !== excludeId &&
-        (a.name.toLowerCase() === lower ||
-          (a.alias && a.alias.toLowerCase() === lower))
+        a.name.toLowerCase() === lower
     );
   };
 
   const newNameDuplicate = isDuplicateName(newName);
-  const newAliasDuplicate = isDuplicateAlias(newAlias);
   const editNameDuplicate = editTarget
     ? isDuplicateName(editName, editTarget.id)
-    : false;
-  const editAliasDuplicate = editTarget
-    ? isDuplicateAlias(editAlias, editTarget.id)
     : false;
 
   const handleAdd = () => {
     const name = newName.trim();
-    if (!name || newNameDuplicate || newAliasDuplicate) return;
-    const alias = newAlias.trim() || undefined;
-    onAddActor(name, newType, alias);
+    if (!name || newNameDuplicate) return;
+    onAddActor(name, newType);
     setNewName("");
-    setNewAlias("");
     setNewType("participant");
     setShowAddForm(false);
   };
@@ -116,13 +96,11 @@ export function ActorList({
   const openEditDialog = (actor: Actor) => {
     setEditTarget(actor);
     setEditName(actor.name);
-    setEditAlias(actor.alias || "");
   };
 
   const handleSaveEdit = () => {
-    if (editTarget && editName.trim() && !editNameDuplicate && !editAliasDuplicate) {
-      const alias = editAlias.trim() || undefined;
-      onRenameActor(editTarget.id, editName.trim(), alias);
+    if (editTarget && editName.trim() && !editNameDuplicate) {
+      onRenameActor(editTarget.id, editName.trim());
       setEditTarget(null);
     }
   };
@@ -167,14 +145,9 @@ export function ActorList({
               </Tooltip>
             </TooltipProvider>
 
-            {/* Name and alias */}
+            {/* Name */}
             <div className="min-w-0 flex-1 truncate text-sm">
               <span>{actor.name}</span>
-              {actor.alias && (
-                <span className="ml-1 text-muted-foreground">
-                  ({actor.alias})
-                </span>
-              )}
             </div>
 
             {/* Actions */}
@@ -227,15 +200,6 @@ export function ActorList({
           {newNameDuplicate && (
             <p className="text-xs text-destructive">Name already in use.</p>
           )}
-          <Input
-            value={newAlias}
-            onChange={(e) => setNewAlias(e.target.value)}
-            placeholder="Alias (optional)"
-            onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-          />
-          {newAliasDuplicate && (
-            <p className="text-xs text-destructive">Alias already in use.</p>
-          )}
           <Select
             value={newType}
             onValueChange={(v) => setNewType(v as ActorType)}
@@ -249,7 +213,7 @@ export function ActorList({
             </SelectContent>
           </Select>
           <div className="flex gap-1">
-            <Button size="sm" onClick={handleAdd} disabled={!newName.trim() || newNameDuplicate || newAliasDuplicate}>
+            <Button size="sm" onClick={handleAdd} disabled={!newName.trim() || newNameDuplicate}>
               Add
             </Button>
             <Button
@@ -258,7 +222,6 @@ export function ActorList({
               onClick={() => {
                 setShowAddForm(false);
                 setNewName("");
-                setNewAlias("");
                 setNewType("participant");
               }}
             >
@@ -319,25 +282,12 @@ export function ActorList({
                 <p className="text-xs text-destructive">Name already in use.</p>
               )}
             </div>
-            <div className="space-y-1">
-              <label className="text-xs text-muted-foreground">
-                Alias (optional)
-              </label>
-              <Input
-                value={editAlias}
-                onChange={(e) => setEditAlias(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSaveEdit()}
-              />
-              {editAliasDuplicate && (
-                <p className="text-xs text-destructive">Alias already in use.</p>
-              )}
-            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditTarget(null)}>
               Cancel
             </Button>
-            <Button onClick={handleSaveEdit} disabled={!editName.trim() || editNameDuplicate || editAliasDuplicate}>
+            <Button onClick={handleSaveEdit} disabled={!editName.trim() || editNameDuplicate}>
               Save
             </Button>
           </DialogFooter>

@@ -8,7 +8,7 @@ describe("mermaid-serializer", () => {
     expect(serialize(state)).toBe("sequenceDiagram");
   });
 
-  it("serializes participants without aliases", () => {
+  it("serializes participants using id as mermaid name and name as alias", () => {
     const state: DiagramState = {
       actors: [
         { id: "a1", name: "Alice", type: "participant" },
@@ -18,25 +18,25 @@ describe("mermaid-serializer", () => {
     };
     const result = serialize(state);
     expect(result).toBe(
-      `sequenceDiagram\n    participant Alice\n    participant Bob`
+      `sequenceDiagram\n    participant a1 as Alice\n    participant a2 as Bob`
     );
   });
 
-  it("serializes participants with aliases", () => {
+  it("serializes participants with spaces in name", () => {
     const state: DiagramState = {
       actors: [
-        { id: "a1", name: "A", alias: "Alice", type: "participant" },
-        { id: "a2", name: "B", alias: "Bob", type: "actor" },
+        { id: "a1", name: "Actor One", type: "participant" },
+        { id: "a2", name: "Actor Two", type: "actor" },
       ],
       elements: [],
     };
     const result = serialize(state);
     expect(result).toBe(
-      `sequenceDiagram\n    participant A as Alice\n    actor B as Bob`
+      `sequenceDiagram\n    participant a1 as Actor One\n    actor a2 as Actor Two`
     );
   });
 
-  it("serializes messages with various arrow types", () => {
+  it("serializes messages using actor ids as references", () => {
     const state: DiagramState = {
       actors: [
         { id: "a1", name: "Alice", type: "participant" },
@@ -87,11 +87,11 @@ describe("mermaid-serializer", () => {
     };
     const result = serialize(state);
     const lines = result.split("\n");
-    expect(lines[3]).toBe("    Alice->>Bob: Hello");
-    expect(lines[4]).toBe("    Bob-->>Alice: Hi back");
-    expect(lines[5]).toBe("    Alice->Bob: Open arrow");
-    expect(lines[6]).toBe("    Alice-xBob: Cross");
-    expect(lines[7]).toBe("    Alice-)Bob: Async");
+    expect(lines[3]).toBe("    a1->>a2: Hello");
+    expect(lines[4]).toBe("    a2-->>a1: Hi back");
+    expect(lines[5]).toBe("    a1->a2: Open arrow");
+    expect(lines[6]).toBe("    a1-xa2: Cross");
+    expect(lines[7]).toBe("    a1-)a2: Async");
   });
 
   it("serializes activations and deactivations", () => {
@@ -104,8 +104,8 @@ describe("mermaid-serializer", () => {
     };
     const result = serialize(state);
     const lines = result.split("\n");
-    expect(lines[2]).toBe("    activate Bob");
-    expect(lines[3]).toBe("    deactivate Bob");
+    expect(lines[2]).toBe("    activate a1");
+    expect(lines[3]).toBe("    deactivate a1");
   });
 
   it("serializes notes", () => {
@@ -140,16 +140,16 @@ describe("mermaid-serializer", () => {
     };
     const result = serialize(state);
     const lines = result.split("\n");
-    expect(lines[3]).toBe("    Note right of Alice: Thinking...");
-    expect(lines[4]).toBe("    Note over Alice, Bob: Shared note");
-    expect(lines[5]).toBe("    Note left of Bob: Private");
+    expect(lines[3]).toBe("    Note right of a1: Thinking...");
+    expect(lines[4]).toBe("    Note over a1, a2: Shared note");
+    expect(lines[5]).toBe("    Note left of a2: Private");
   });
 
   it("serializes a complete diagram", () => {
     const state: DiagramState = {
       actors: [
-        { id: "a1", name: "A", alias: "Alice", type: "participant" },
-        { id: "a2", name: "B", alias: "Bob", type: "actor" },
+        { id: "a1", name: "Alice", type: "participant" },
+        { id: "a2", name: "Bob", type: "actor" },
       ],
       elements: [
         {
@@ -181,13 +181,13 @@ describe("mermaid-serializer", () => {
     };
     const expected = [
       "sequenceDiagram",
-      "    participant A as Alice",
-      "    actor B as Bob",
-      "    A->>B: Hello Bob",
-      "    activate B",
-      "    B-->>A: Hi Alice",
-      "    deactivate B",
-      "    Note over A: Thinking...",
+      "    participant a1 as Alice",
+      "    actor a2 as Bob",
+      "    a1->>a2: Hello Bob",
+      "    activate a2",
+      "    a2-->>a1: Hi Alice",
+      "    deactivate a2",
+      "    Note over a1: Thinking...",
     ].join("\n");
     expect(serialize(state)).toBe(expected);
   });
