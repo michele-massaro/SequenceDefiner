@@ -22,6 +22,7 @@ describe("saveDiagramToStorage / loadDiagramFromStorage", () => {
 
   it("saves and loads a diagram state", () => {
     const state: DiagramState = {
+      title: "Title",
       actors: [{ id: "a1", name: "Alice", type: "participant" }],
       elements: [
         {
@@ -39,13 +40,14 @@ describe("saveDiagramToStorage / loadDiagramFromStorage", () => {
   });
 
   it("saves and loads an empty diagram state", () => {
-    const state: DiagramState = { actors: [], elements: [] };
+    const state: DiagramState = { title: "Title", actors: [], elements: [] };
     saveDiagramToStorage(state);
     expect(loadDiagramFromStorage()).toEqual(state);
   });
 
   it("saves a state with all element types and loads it back correctly", () => {
     const state: DiagramState = {
+      title: "Title",
       actors: [
         { id: "a1", name: "Alice", type: "participant" },
         { id: "a2", name: "Bob", type: "actor" },
@@ -83,12 +85,26 @@ describe("saveDiagramToStorage / loadDiagramFromStorage", () => {
     expect(loadDiagramFromStorage()).toBeNull();
   });
 
+  it("loads stored state without title and defaults to 'Title' (backward compat)", () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ actors: [], elements: [] })
+    );
+    expect(loadDiagramFromStorage()).toEqual({
+      title: "Title",
+      actors: [],
+      elements: [],
+    });
+  });
+
   it("overwrites previously saved state", () => {
     const first: DiagramState = {
+      title: "Title",
       actors: [{ id: "a1", name: "Alice", type: "participant" }],
       elements: [],
     };
     const second: DiagramState = {
+      title: "Title",
       actors: [{ id: "a2", name: "Bob", type: "actor" }],
       elements: [],
     };

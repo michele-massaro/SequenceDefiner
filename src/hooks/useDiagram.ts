@@ -11,7 +11,11 @@ function generateId(): string {
   return `id-${nextId++}-${Date.now()}`;
 }
 
+const DEFAULT_TITLE = "Title";
+export { DEFAULT_TITLE };
+
 const emptyState: DiagramState = {
+  title: DEFAULT_TITLE,
   actors: [],
   elements: [],
 };
@@ -119,6 +123,10 @@ export function useDiagram(initialState?: DiagramState) {
     });
   }, []);
 
+  const setTitle = useCallback((title: string) => {
+    setState((prev) => ({ ...prev, title }));
+  }, []);
+
   const resetDiagram = useCallback(() => {
     setState(emptyState);
   }, []);
@@ -138,6 +146,7 @@ export function useDiagram(initialState?: DiagramState) {
     removeElement,
     updateElement,
     reorderElement,
+    setTitle,
     resetDiagram,
     loadState,
   };

@@ -8,6 +8,11 @@ describe("mermaid-serializer", () => {
     expect(serialize(state)).toBe("sequenceDiagram");
   });
 
+  it("serializes title as front matter when provided", () => {
+    const state: DiagramState = { title: "My Diagram", actors: [], elements: [] };
+    expect(serialize(state)).toBe("---\ntitle: My Diagram\n---\nsequenceDiagram");
+  });
+
   it("serializes participants using id as mermaid name and name as alias", () => {
     const state: DiagramState = {
       actors: [

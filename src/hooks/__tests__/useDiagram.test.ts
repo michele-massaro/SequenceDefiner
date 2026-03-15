@@ -15,6 +15,11 @@ describe("useDiagram – initial state", () => {
     expect(result.current.state.elements).toEqual([]);
   });
 
+  it("starts with default title 'Title' when no initial state is provided", () => {
+    const { result } = setup();
+    expect(result.current.state.title).toBe("Title");
+  });
+
   it("uses the provided initial state", () => {
     const initial: DiagramState = {
       actors: [{ id: "a1", name: "Alice", type: "participant" }],
@@ -22,6 +27,22 @@ describe("useDiagram – initial state", () => {
     };
     const { result } = setup(initial);
     expect(result.current.state).toEqual(initial);
+  });
+});
+
+describe("useDiagram – setTitle", () => {
+  it("updates the diagram title", () => {
+    const { result } = setup();
+    act(() => result.current.setTitle("My Sequence"));
+    expect(result.current.state.title).toBe("My Sequence");
+  });
+
+  it("preserves actors and elements when setting title", () => {
+    const { result } = setup();
+    act(() => result.current.addActor("Alice"));
+    act(() => result.current.setTitle("New Title"));
+    expect(result.current.state.actors).toHaveLength(1);
+    expect(result.current.state.title).toBe("New Title");
   });
 });
 

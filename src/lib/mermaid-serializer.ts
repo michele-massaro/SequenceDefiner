@@ -31,7 +31,13 @@ function serializeElement(element: DiagramElement, actors: Actor[]): string {
 }
 
 export function serialize(state: DiagramState): string {
-  const lines: string[] = ["sequenceDiagram"];
+  const lines: string[] = [];
+
+  if (state.title !== undefined) {
+    lines.push("---", `title: ${state.title}`, "---");
+  }
+
+  lines.push("sequenceDiagram");
 
   for (const actor of state.actors) {
     lines.push(serializeActor(actor));
