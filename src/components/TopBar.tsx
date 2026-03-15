@@ -17,18 +17,26 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { MenuIcon, FilePlusIcon, UploadIcon, DownloadIcon } from "lucide-react";
+import { MenuIcon, FilePlusIcon, UploadIcon, DownloadIcon, ImageIcon } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { cn } from "@/lib/utils";
+
+type ImageFormat = "png" | "svg";
+type ImageBackground = "white" | "transparent";
 
 interface TopBarProps {
   mermaidCode: string;
+  svg: string;
   onNewSession: () => void;
   onImport: (state: DiagramState) => void;
 }
 
-export function TopBar({ mermaidCode, onNewSession, onImport }: TopBarProps) {
+export function TopBar({ mermaidCode, svg, onNewSession, onImport }: TopBarProps) {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
+  const [exportImageOpen, setExportImageOpen] = useState(false);
+  const [imageFormat, setImageFormat] = useState<ImageFormat>("png");
+  const [imageBg, setImageBg] = useState<ImageBackground>("white");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleNewSession = useCallback(() => {
@@ -84,6 +92,94 @@ export function TopBar({ mermaidCode, onNewSession, onImport }: TopBarProps) {
     fileInputRef.current?.click();
   }, []);
 
+  const handleExportImage = useCallback(() => {
+    if (!svg) return;
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(svg, "image/svg+xml");
+    const svgEl = doc.documentElement as unknown as SVGSVGElement;
+
+    if (!svgEl.getAttribute("xmlns")) {
+      svgEl.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    }
+
+    if (imageFormat === "svg") {
+      if (imageBg === "white") {
+        const rect = doc.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute("width", "100%");
+        rect.setAttribute("height", "100%");
+        rect.setAttribute("fill", "white");
+        svgEl.insertBefore(rect, svgEl.firstChild);
+      }
+      const serializer = new XMLSerializer();
+      const svgString = serializer.serializeToString(svgEl);
+      const blob = new Blob([svgString], { type: "image/svg+xml" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "sequence-diagram.svg";
+      a.click();
+      URL.revokeObjectURL(url);
+      setExportImageOpen(false);
+    } else {
+      // Determine SVG dimensions from viewBox or width/height attributes
+      let width = 800;
+      let height = 600;
+      const viewBox = svgEl.getAttribute("viewBox");
+      if (viewBox) {
+        const parts = viewBox.split(/[\s,]+/);
+        if (parts.length === 4) {
+          width = parseFloat(parts[2]) || 800;
+          height = parseFloat(parts[3]) || 600;
+        }
+      } else {
+        const w = svgEl.getAttribute("width");
+        const h = svgEl.getAttribute("height");
+        if (w && !w.includes("%")) width = parseFloat(w) || 800;
+        if (h && !h.includes("%")) height = parseFloat(h) || 600;
+      }
+
+      const serializer = new XMLSerializer();
+      const svgString = serializer.serializeToString(svgEl);
+      const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const img = new Image();
+      img.onload = () => {
+        const scale = 2; // 2× for retina-quality output
+        const canvas = document.createElement("canvas");
+        canvas.width = width * scale;
+        canvas.height = height * scale;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          URL.revokeObjectURL(url);
+          return;
+        }
+        ctx.scale(scale, scale);
+        if (imageBg === "white") {
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, width, height);
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        URL.revokeObjectURL(url);
+        canvas.toBlob((pngBlob) => {
+          if (!pngBlob) return;
+          const pngUrl = URL.createObjectURL(pngBlob);
+          const a = document.createElement("a");
+          a.href = pngUrl;
+          a.download = "sequence-diagram.png";
+          a.click();
+          URL.revokeObjectURL(pngUrl);
+          setExportImageOpen(false);
+        }, "image/png");
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+      };
+      img.src = url;
+    }
+  }, [svg, imageFormat, imageBg]);
+
   return (
     <div className="flex h-14 items-center justify-between border-b px-4">
       <h1 className="text-lg font-semibold">SequenceDefiner</h1>
@@ -109,6 +205,13 @@ export function TopBar({ mermaidCode, onNewSession, onImport }: TopBarProps) {
             <DropdownMenuItem onClick={handleExport}>
               <DownloadIcon />
               Export File
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setExportImageOpen(true)}
+              disabled={!svg}
+            >
+              <ImageIcon />
+              Export Image
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -157,6 +260,88 @@ export function TopBar({ mermaidCode, onNewSession, onImport }: TopBarProps) {
           </DialogHeader>
           <DialogFooter>
             <Button onClick={() => setImportError(null)}>OK</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Export Image dialog */}
+      <Dialog open={exportImageOpen} onOpenChange={setExportImageOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Export Image</DialogTitle>
+            <DialogDescription>
+              Choose the format and background for the exported image.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex flex-col gap-4 py-2">
+            {/* Format selector */}
+            <div className="flex flex-col gap-2">
+              <span className="text-sm font-medium">Format</span>
+              <div className="flex gap-2">
+                {(["png", "svg"] as const).map((fmt) => (
+                  <button
+                    key={fmt}
+                    onClick={() => setImageFormat(fmt)}
+                    className={cn(
+                      "flex-1 rounded-md border px-3 py-2 text-sm font-medium transition-colors",
+                      imageFormat === fmt
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-input bg-background text-foreground hover:bg-muted"
+                    )}
+                  >
+                    {fmt.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Background selector */}
+            <div className="flex flex-col gap-2">
+              <span className="text-sm font-medium">Background</span>
+              <div className="flex gap-2">
+                {(["white", "transparent"] as const).map((bg) => (
+                  <button
+                    key={bg}
+                    onClick={() => setImageBg(bg)}
+                    className={cn(
+                      "flex flex-1 items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors",
+                      imageBg === bg
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-input bg-background text-foreground hover:bg-muted"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "inline-block h-4 w-4 shrink-0 rounded-sm border",
+                        bg === "white"
+                          ? "bg-white border-border"
+                          : "border-border"
+                      )}
+                      style={
+                        bg === "transparent"
+                          ? {
+                              background:
+                                "repeating-conic-gradient(#aaa 0% 25%, #fff 0% 50%) 0 0 / 8px 8px",
+                            }
+                          : undefined
+                      }
+                    />
+                    {bg.charAt(0).toUpperCase() + bg.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setExportImageOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleExportImage}>Export</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
