@@ -8,8 +8,25 @@ beforeEach(() => {
 describe("mermaid-parser", () => {
   it("parses an empty diagram", () => {
     const result = parse("sequenceDiagram");
+    expect(result.title).toBe("Title");
     expect(result.actors).toEqual([]);
     expect(result.elements).toEqual([]);
+  });
+
+  it("parses title from front matter", () => {
+    const input = `---
+title: My Sequence
+---
+sequenceDiagram`;
+    const result = parse(input);
+    expect(result.title).toBe("My Sequence");
+  });
+
+  it("defaults title to 'Title' when no front matter is present", () => {
+    const input = `sequenceDiagram
+    participant Alice`;
+    const result = parse(input);
+    expect(result.title).toBe("Title");
   });
 
   it("parses participants without aliases", () => {

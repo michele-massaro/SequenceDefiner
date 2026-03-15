@@ -222,4 +222,15 @@ describe("round-trip: parse → serialize → parse", () => {
     expect(parsed2.actors[1].name).toBe("Bob");
     expect(parsed2.elements).toHaveLength(1);
   });
+
+  it("round-trips title — title is preserved after serialize → parse", () => {
+    const original: DiagramState = {
+      title: "My Sequence Diagram",
+      actors: [{ id: "a1", name: "Alice", type: "participant" }],
+      elements: [],
+    };
+    const mermaid = serialize(original);
+    const parsed = parse(mermaid);
+    expect(parsed.title).toBe("My Sequence Diagram");
+  });
 });

@@ -4,7 +4,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { DiagramPreview } from "@/components/DiagramPreview";
 import { BottomBar } from "@/components/BottomBar";
 import { ResizableDivider } from "@/components/ResizableDivider";
-import { useDiagram } from "@/hooks/useDiagram";
+import { useDiagram, DEFAULT_TITLE } from "@/hooks/useDiagram";
 import { useMermaid } from "@/hooks/useMermaid";
 import { useTheme } from "@/components/ThemeProvider";
 import { serialize } from "@/lib/mermaid-serializer";
@@ -61,8 +61,10 @@ function App() {
       <div className="relative flex flex-1 overflow-hidden">
         <Sidebar
           width={sidebarWidth}
+          title={diagram.state.title ?? DEFAULT_TITLE}
           actors={diagram.state.actors}
           elements={diagram.state.elements}
+          onSetTitle={diagram.setTitle}
           onAddActor={diagram.addActor}
           onRemoveActor={diagram.removeActor}
           onRenameActor={diagram.renameActor}

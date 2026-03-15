@@ -35,6 +35,7 @@ export interface Note {
 export type DiagramElement = Message | Activation | Note;
 
 export interface DiagramState {
+  title?: string;
   actors: Actor[];
   elements: DiagramElement[];
 }

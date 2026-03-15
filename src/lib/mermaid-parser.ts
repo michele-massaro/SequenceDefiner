@@ -126,8 +126,25 @@ export function parse(input: string): DiagramState {
   const actors: Actor[] = [];
   const elements: DiagramElement[] = [];
   const actorsByName = new Map<string, Actor>();
+  let title: string | undefined;
 
-  for (const line of lines) {
+  // Parse optional YAML front matter block (---\ntitle: ...\n---)
+  let lineStart = 0;
+  if (lines[0]?.trim() === "---") {
+    const closingIndex = lines.findIndex((l, i) => i > 0 && l.trim() === "---");
+    if (closingIndex !== -1) {
+      for (let i = 1; i < closingIndex; i++) {
+        const match = lines[i].match(/^\s*title\s*:\s*(.+)$/);
+        if (match) {
+          title = match[1].trim();
+        }
+      }
+      lineStart = closingIndex + 1;
+    }
+  }
+
+  for (let i = lineStart; i < lines.length; i++) {
+    const line = lines[i];
     const trimmed = line.trim();
 
     // Skip empty lines and the sequenceDiagram header
@@ -168,5 +185,5 @@ export function parse(input: string): DiagramState {
     }
   }
 
-  return { actors, elements };
+  return { title: title ?? "Title", actors, elements };
 }

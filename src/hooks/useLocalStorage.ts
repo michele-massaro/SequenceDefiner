@@ -13,7 +13,12 @@ export function loadDiagramFromStorage(): DiagramState | null {
       Array.isArray(parsed.actors) &&
       Array.isArray(parsed.elements)
     ) {
-      return parsed;
+      // Ensure backward-compatible stored data without title gets a default
+      return {
+        title: typeof parsed.title === "string" ? parsed.title : "Title",
+        actors: parsed.actors,
+        elements: parsed.elements,
+      };
     }
     return null;
   } catch {
