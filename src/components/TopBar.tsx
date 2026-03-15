@@ -20,6 +20,7 @@ import {
 import { MenuIcon, FilePlusIcon, UploadIcon, DownloadIcon, ImageIcon } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
+import { APP_VERSION } from "@/lib/version";
 
 type ImageFormat = "png" | "svg";
 type ImageBackground = "white" | "transparent";
@@ -184,6 +185,9 @@ export function TopBar({ mermaidCode, svg, onNewSession, onImport }: TopBarProps
     <div className="flex h-14 items-center justify-between border-b px-4">
       <h1 className="text-lg font-semibold">SequenceDefiner</h1>
       <div className="flex items-center gap-2">
+        <span className="select-none text-xs font-medium text-muted-foreground">
+          v{APP_VERSION}
+        </span>
         <ThemeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger
